@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceInvaderZ.Core;
@@ -19,7 +20,7 @@ public class Player
     );
 
 
-    public bool CanFire => _fireCooldown <= 0f;
+    public bool CanFire() => _fireCooldown <= 0f;
 
     public bool IsAlive {get; private set;} = true;
 
@@ -44,6 +45,11 @@ public class Player
         _x = GameSettings.ScreenWidth / 2f - GameSettings.PlayerWidth / 2f;
     }
 
+    public Vector2 FirePosition => new Vector2(
+        _x + GameSettings.PlayerWidth / 2f - GameSettings.BulletWidth / 2f,
+        GameSettings.PlayerY - GameSettings.BulletHeight
+    );
+
     public void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -56,6 +62,8 @@ public class Player
             _x += GameSettings.PlayerSpeed * dt;
 
         _x = MathHelper.Clamp(_x,0,GameSettings.ScreenWidth - GameSettings.PlayerWidth);
+
+       
 
         if (_fireCooldown > 0f)
             _fireCooldown -= dt;

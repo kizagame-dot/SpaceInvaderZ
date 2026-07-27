@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceInvaderZ.Core;
@@ -13,6 +14,9 @@ public class Game1 : Game
     private Texture2D _pixel;
 
     private Player _player;
+
+    private Bullet? _playerBullet = null;
+    private KeyboardState _previousKb;
 
     public Game1()
     {
@@ -43,7 +47,27 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        _player.Update(gameTime);
+
+                _player.Update(gameTime);
+
+        KeyboardState currentKb = Keyboard.GetState();
+
+        if (currentKb.IsKeyDown(Keys.Space) && _previousKb.IsKeyUp(Keys.Space))
+        {
+
+            if(_playerBullet == null && _player.CanFire())
+            {
+                _playerBullet = new Bullet(_player.FirePosition, BulletOwner.Player);
+                _player.OnFire();
+            }
+        }
+
+        _playerBullet?.Update(gameTime);
+
+        if(_playerBullet != null && !_playerBullet.IsActive)
+            _playerBullet = null;
+
+        _previousKb = currentKb;
 
         base.Update(gameTime);
     }
@@ -58,6 +82,8 @@ public class Game1 : Game
         );
 
         _player.Draw(_spriteBatch, _pixel);
+        _playerBullet?.Draw(_spriteBatch, _pixel);
+
 
         _spriteBatch.End();
 

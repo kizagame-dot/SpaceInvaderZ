@@ -17,7 +17,7 @@ public static class GameSettings
     public const int PlayerWidth = 40;
     public const int PlayerHeight = 24;
     public const int PlayerY = 540;
-    public const float PlayerFireRate = 300f;
+    public const float PlayerFireRate = 0.3f;
 
 
     // Enemies
