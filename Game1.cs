@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceInvaderZ.Core;
 using SpaceInvaderZ.Entities;
+using SpaceInvaderZ.Managers;
 
 namespace SpaceInvaderZ;
 
@@ -14,6 +15,7 @@ public class Game1 : Game
     private Texture2D _pixel;
 
     private Player _player;
+    private EnemyManager _enemyManager;
 
     private Bullet? _playerBullet = null;
     private KeyboardState _previousKb;
@@ -32,6 +34,14 @@ public class Game1 : Game
         _graphics.ApplyChanges();
 
         _player = new Player();
+        _enemyManager = new EnemyManager();
+
+        //test
+        foreach (Enemy enemy in _enemyManager.Enemies)
+{
+    Console.WriteLine($"Type : {enemy.Type} @@@@+ Pos : {enemy.Position} @@@@+ Live :{enemy.isAlive}");
+}
+Console.WriteLine(_enemyManager.Enemies.Count);
 
         base.Initialize();
     }
@@ -47,9 +57,6 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-
-                _player.Update(gameTime);
-
         KeyboardState currentKb = Keyboard.GetState();
 
         if (currentKb.IsKeyDown(Keys.Space) && _previousKb.IsKeyUp(Keys.Space))
@@ -62,6 +69,12 @@ public class Game1 : Game
             }
         }
 
+        _player.Update(gameTime);
+        _enemyManager.Update(gameTime);
+        if(_enemyManager.ReachedPlayer)
+        {
+            Console.WriteLine("DONE");
+        }
         _playerBullet?.Update(gameTime);
 
         if(_playerBullet != null && !_playerBullet.IsActive)
@@ -82,6 +95,7 @@ public class Game1 : Game
         );
 
         _player.Draw(_spriteBatch, _pixel);
+        _enemyManager.Draw(_spriteBatch,_pixel);
         _playerBullet?.Draw(_spriteBatch, _pixel);
 
 
